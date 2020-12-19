@@ -55,35 +55,44 @@ public OnPlayerSpawn(playerid)
         #if defined __YSF_DEFINED
             SendPlayerClientGameInit(playerid, .lagcompmode = 0);
         #elseif defined __PAWN_RAKNET_DEFINED
-            new BitStream:bs = BS_New();
+            new BitStream:bs = BS_New(), hostname[50];
+
+			GetConsoleVarAsString("hostname", hostname, sizeof(hostname));
 
             BS_WriteValue(bs,
-                PR_BOOL,    false,
-                PR_BOOL,    __opws_fix_UsePlayerPedAnims,
-                PR_BOOL,    true,
-                PR_BOOL,    __opws_fix_LimitChatRadius,
+                PR_CBOOL,   false,
+                PR_CBOOL,   __opws_fix_UsePlayerPedAnims,
+                PR_CBOOL,   true,
+                PR_CBOOL,   __opws_fix_LimitChatRadius,
                 PR_FLOAT,   __opws_fix_ChatRadius,
-                PR_BOOL,    __opws_fix_StuntBonus,
+                PR_CBOOL,   __opws_fix_StuntBonus,
                 PR_FLOAT,   __opws_fix_NameTagDistance,
-                PR_BOOL,    __opws_fix_DisableEnterExits,
-                PR_BOOL,    true,
-                PR_BOOL,    __opws_fix_ManualVehicles,
+                PR_CBOOL,   __opws_fix_DisableEnterExits,
+                PR_CBOOL,   true,
+                PR_CBOOL,   __opws_fix_ManualVehicles,
                 PR_INT32,   0,
                 PR_UINT16,  playerid,
-                PR_BOOL,    __opws_fix_ShowNameTags,
+                PR_CBOOL,   __opws_fix_ShowNameTags,
                 PR_INT32,   __opws_fix_PlayerMarkers,
                 PR_UINT8,   12,
                 PR_UINT8,   10,
                 PR_FLOAT,   0.008,
-                PR_BOOL,    !!GetConsoleVarAsInt("lanmode"),
-                PR_BOOL,    false,
+                PR_CBOOL,   !!GetConsoleVarAsInt("lanmode"),
+                PR_INT32,   0,
                 PR_CBOOL,   false,
                 PR_INT32,   GetConsoleVarAsInt("onfoot_rate"),
                 PR_INT32,   GetConsoleVarAsInt("incar_rate"),
                 PR_INT32,   GetConsoleVarAsInt("weapon_rate"),
-                PR_INT32,   2,
-                PR_INT32,   0,
-                PR_UINT16,  0
+                PR_INT32,   10,
+				PR_UINT8,   0,
+
+				PR_UINT8,   0,
+				PR_UINT8,   0,
+				PR_UINT8,   0,
+                
+				PR_UINT8,   strlen(hostname),
+                PR_STRING,  hostname,
+				PR_UINT8,   strlen(hostname)
             );
 
             __PAWN_RAKNET_DEFINED(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
@@ -239,5 +248,3 @@ public OnPlayerSpawn(playerid)
 #if defined opws_fix_OnPlayerConnect
     forward opws_fix_OnPlayerConnect();
 #endif
-
-#undef __YSF_DEFINED
