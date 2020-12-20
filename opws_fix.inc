@@ -1,5 +1,5 @@
 #if defined opws_fix_included_
-    #endinput
+	#endinput
 #endif
 
 #define opws_fix_included_
@@ -11,34 +11,34 @@
 #endif
 
 #if defined PR_SendRPC
-    #define __PAWNRAKNET_SEND PR_SendRPC
+	#define __PAWNRAKNET_SEND PR_SendRPC
 #elseif defined BS_Send
-    #define __PAWNRAKNET_SEND BS_Send
+	#define __PAWNRAKNET_SEND BS_Send
 #endif
 
 static
-    __opws_fix_PlayerFixCount[MAX_PLAYERS char],
-    __opws_fix_PlayerMarkers = PLAYER_MARKERS_MODE_GLOBAL,
-    bool:__opws_fix_UsePlayerPedAnims = false,
-    bool:__opws_fix_LimitChatRadius = false,
-    bool:__opws_fix_StuntBonus = false,
-    bool:__opws_fix_DisableEnterExits = false,
-    bool:__opws_fix_ManualVehicles = false,
-    bool:__opws_fix_ShowNameTags = true,
-    Float:__opws_fix_NameTagDistance = 70.0,
-    Float:__opws_fix_ChatRadius = 10000.0;
+	__opws_fix_PlayerFixCount[MAX_PLAYERS char],
+	__opws_fix_PlayerMarkers = PLAYER_MARKERS_MODE_GLOBAL,
+	bool:__opws_fix_UsePlayerPedAnims = false,
+	bool:__opws_fix_LimitChatRadius = false,
+	bool:__opws_fix_StuntBonus = false,
+	bool:__opws_fix_DisableEnterExits = false,
+	bool:__opws_fix_ManualVehicles = false,
+	bool:__opws_fix_ShowNameTags = true,
+	Float:__opws_fix_NameTagDistance = 70.0,
+	Float:__opws_fix_ChatRadius = 10000.0;
 
 public OnPlayerConnect(playerid)
 {
 	if (!GetConsoleVarAsInt("lagcompmode"))
 	{
-    	__opws_fix_PlayerFixCount{playerid} = 2;
+		__opws_fix_PlayerFixCount{playerid} = 2;
 	}
 
-    #if defined opws_fix_OnPlayerConnect
-        opws_fix_OnPlayerConnect(playerid);
-    #endif
-    return 1;
+	#if defined opws_fix_OnPlayerConnect
+		opws_fix_OnPlayerConnect(playerid);
+	#endif
+	return 1;
 }
 
 public OnPlayerSpawn(playerid)
@@ -98,10 +98,10 @@ public OnPlayerSpawn(playerid)
 		}
 	}
 
-    #if defined opws_fix_OnPlayerSpawn
-        opws_fix_OnPlayerSpawn(playerid);
-    #endif
-    return 1;
+	#if defined opws_fix_OnPlayerSpawn
+		opws_fix_OnPlayerSpawn(playerid);
+	#endif
+	return 1;
 }
 
 stock opws_fix_SetWeather(weatherid)
@@ -218,25 +218,25 @@ stock opws_fix_LimitGlobalChatRadius(Float:chat_radius)
 #define LimitGlobalChatRadius opws_fix_LimitGlobalChatRadius
 
 #if defined _ALS_OnPlayerSpawn
-    #undef OnPlayerSpawn
+	#undef OnPlayerSpawn
 #else
-    #define _ALS_OnPlayerSpawn
+	#define _ALS_OnPlayerSpawn
 #endif
 
 #define OnPlayerSpawn opws_fix_OnPlayerSpawn
 
 #if defined opws_fix_OnPlayerSpawn
-    forward opws_fix_OnPlayerSpawn();
+	forward opws_fix_OnPlayerSpawn();
 #endif
 
 #if defined _ALS_OnPlayerConnect
-    #undef OnPlayerConnect
+	#undef OnPlayerConnect
 #else
-    #define _ALS_OnPlayerConnect
+	#define _ALS_OnPlayerConnect
 #endif
 
 #define OnPlayerConnect opws_fix_OnPlayerConnect
 
 #if defined opws_fix_OnPlayerConnect
-    forward opws_fix_OnPlayerConnect();
+	forward opws_fix_OnPlayerConnect();
 #endif
