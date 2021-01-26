@@ -33,15 +33,11 @@ static
 
 public OnPlayerConnect(playerid)
 {
-	//moved this up ahead otherwise OPC isn't processed in the main script
 	#if defined opws_fix_OnPlayerConnect
 		opws_fix_OnPlayerConnect(playerid);
 	#endif
-	//
+
 	
-	
-	
-	//not sure if __opws_fix_PlayerFixCount is still necessary tho
 	__opws_fix_PlayerFixCount{playerid} = (!GetConsoleVarAsInt("lagcompmode") ? 2 : 0);
 	
 	
@@ -91,8 +87,6 @@ public OnPlayerConnect(playerid)
 
 		__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
 		BS_Delete(bs);
-		
-		//I've also removed the TogglePlayerSpectating functions
 
 		return 1;
 	}	
