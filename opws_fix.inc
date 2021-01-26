@@ -87,6 +87,11 @@ public OnPlayerSpawn(playerid)
 			PR_UINT8,   strlen(hostname)
 		);
 
+		for (new i = 212; i != -1; i -= 1)
+		{
+			BS_WriteValue(bs, PR_BOOL, true);
+		}
+
 		__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
 		BS_Delete(bs);
 
