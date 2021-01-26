@@ -91,6 +91,8 @@ public OnPlayerConnect(playerid)
 
 		__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
 		BS_Delete(bs);
+		
+		//I've also removed the TogglePlayerSpectating functions
 
 		return 1;
 	}	
