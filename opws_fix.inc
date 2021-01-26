@@ -19,6 +19,9 @@
 static
 	__opws_fix_PlayerFixCount[MAX_PLAYERS char],
 	__opws_fix_PlayerMarkers = PLAYER_MARKERS_MODE_GLOBAL,
+	__opws_fix_Weather = 10,
+	__opws_fix_WorldTime = 12,
+	Float:__opws_fix_Gravity = 0.008,
 	bool:__opws_fix_UsePlayerPedAnims = false,
 	bool:__opws_fix_LimitChatRadius = false,
 	bool:__opws_fix_StuntBonus = false,
@@ -30,10 +33,7 @@ static
 
 public OnPlayerConnect(playerid)
 {
-	if (!GetConsoleVarAsInt("lagcompmode"))
-	{
-		__opws_fix_PlayerFixCount{playerid} = 2;
-	}
+	__opws_fix_PlayerFixCount{playerid} = (!GetConsoleVarAsInt("lagcompmode") ? 2 : 0);
 
 	#if defined opws_fix_OnPlayerConnect
 		opws_fix_OnPlayerConnect(playerid);
@@ -43,59 +43,56 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerSpawn(playerid)
 {
-	if (!GetConsoleVarAsInt("lagcompmode"))
+	if (__opws_fix_PlayerFixCount{playerid} > 0)
 	{
-		if (__opws_fix_PlayerFixCount{playerid} > 0)
-		{
-			__opws_fix_PlayerFixCount{playerid} -= 1;
+		__opws_fix_PlayerFixCount{playerid} -= 1;
 
-			new BitStream:bs = BS_New(), hostname[50];
+		new BitStream:bs = BS_New(), hostname[50];
 
-			GetConsoleVarAsString("hostname", hostname, sizeof(hostname));
+		GetConsoleVarAsString("hostname", hostname, sizeof(hostname));
 
-			BS_WriteValue(bs,
-				PR_CBOOL,   false,
-				PR_CBOOL,   __opws_fix_UsePlayerPedAnims,
-				PR_CBOOL,   true,
-				PR_CBOOL,   __opws_fix_LimitChatRadius,
-				PR_FLOAT,   __opws_fix_ChatRadius,
-				PR_CBOOL,   __opws_fix_StuntBonus,
-				PR_FLOAT,   __opws_fix_NameTagDistance,
-				PR_CBOOL,   __opws_fix_DisableEnterExits,
-				PR_CBOOL,   true,
-				PR_CBOOL,   __opws_fix_ManualVehicles,
-				PR_INT32,   0,
-				PR_UINT16,  playerid,
-				PR_CBOOL,   __opws_fix_ShowNameTags,
-				PR_INT32,   __opws_fix_PlayerMarkers,
-				PR_UINT8,   12,
-				PR_UINT8,   10,
-				PR_FLOAT,   0.008,
-				PR_CBOOL,   !!GetConsoleVarAsInt("lanmode"),
-				PR_INT32,   0,
-				PR_CBOOL,   false,
-				PR_INT32,   GetConsoleVarAsInt("onfoot_rate"),
-				PR_INT32,   GetConsoleVarAsInt("incar_rate"),
-				PR_INT32,   GetConsoleVarAsInt("weapon_rate"),
-				PR_INT32,   10,
-				PR_UINT8,   __opws_fix_PlayerFixCount{playerid},
+		BS_WriteValue(bs,
+			PR_CBOOL,   false,
+			PR_CBOOL,   __opws_fix_UsePlayerPedAnims,
+			PR_CBOOL,   true,
+			PR_CBOOL,   __opws_fix_LimitChatRadius,
+			PR_FLOAT,   __opws_fix_ChatRadius,
+			PR_CBOOL,   __opws_fix_StuntBonus,
+			PR_FLOAT,   __opws_fix_NameTagDistance,
+			PR_CBOOL,   __opws_fix_DisableEnterExits,
+			PR_CBOOL,   true,
+			PR_CBOOL,   __opws_fix_ManualVehicles,
+			PR_INT32,   0,
+			PR_UINT16,  playerid,
+			PR_CBOOL,   __opws_fix_ShowNameTags,
+			PR_INT32,   __opws_fix_PlayerMarkers,
+			PR_UINT8,   __opws_fix_WorldTime,
+			PR_UINT8,   __opws_fix_Weather,
+			PR_FLOAT,   __opws_fix_Gravity,
+			PR_CBOOL,   !!GetConsoleVarAsInt("lanmode"),
+			PR_INT32,   0,
+			PR_CBOOL,   false,
+			PR_INT32,   GetConsoleVarAsInt("onfoot_rate"),
+			PR_INT32,   GetConsoleVarAsInt("incar_rate"),
+			PR_INT32,   GetConsoleVarAsInt("weapon_rate"),
+			PR_INT32,   10,
+			PR_UINT8,   __opws_fix_PlayerFixCount{playerid},
 
-				PR_UINT8,   0,
-				PR_UINT8,   0,
-				PR_UINT8,   0,
-				
-				PR_UINT8,   strlen(hostname),
-				PR_STRING,  hostname,
-				PR_UINT8,   strlen(hostname)
-			);
+			PR_UINT8,   0,
+			PR_UINT8,   0,
+			PR_UINT8,   0,
+			
+			PR_UINT8,   strlen(hostname),
+			PR_STRING,  hostname,
+			PR_UINT8,   strlen(hostname)
+		);
 
-			__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
-			BS_Delete(bs);
+		__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
+		BS_Delete(bs);
 
-			TogglePlayerSpectating(playerid, true);
-			TogglePlayerSpectating(playerid, false);
-			return 1;
-		}
+		TogglePlayerSpectating(playerid, true);
+		TogglePlayerSpectating(playerid, false);
+		return 1;
 	}
 
 	#if defined opws_fix_OnPlayerSpawn
@@ -152,6 +149,20 @@ stock opws_fix_LimitGlobalChatRadius(Float:chat_radius)
 	__opws_fix_ChatRadius = chat_radius;
 	return LimitGlobalChatRadius(chat_radius);
 }
+
+stock opws_fix_SetWorldTime(hour)
+{
+	__opws_fix_WorldTime = hour;
+	return SetWorldTime(hour);
+}
+
+#if defined _ALS_SetWorldTime
+	#undef SetWorldTime
+#else
+	#define _ALS_SetWorldTime
+#endif
+
+#define SetWorldTime opws_fix_SetWorldTime
 
 #if defined _ALS_SetWeather
 	#undef SetWeather
@@ -226,7 +237,7 @@ stock opws_fix_LimitGlobalChatRadius(Float:chat_radius)
 #define OnPlayerSpawn opws_fix_OnPlayerSpawn
 
 #if defined opws_fix_OnPlayerSpawn
-	forward opws_fix_OnPlayerSpawn();
+	forward opws_fix_OnPlayerSpawn(playerid);
 #endif
 
 #if defined _ALS_OnPlayerConnect
@@ -238,5 +249,5 @@ stock opws_fix_LimitGlobalChatRadius(Float:chat_radius)
 #define OnPlayerConnect opws_fix_OnPlayerConnect
 
 #if defined opws_fix_OnPlayerConnect
-	forward opws_fix_OnPlayerConnect();
+	forward opws_fix_OnPlayerConnect(playerid);
 #endif
