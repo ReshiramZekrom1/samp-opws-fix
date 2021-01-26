@@ -33,16 +33,18 @@ static
 
 public OnPlayerConnect(playerid)
 {
-	__opws_fix_PlayerFixCount{playerid} = (!GetConsoleVarAsInt("lagcompmode") ? 2 : 0);
-
+	//moved this up ahead otherwise OPC isn't processed in the main script
 	#if defined opws_fix_OnPlayerConnect
 		opws_fix_OnPlayerConnect(playerid);
 	#endif
-	return 1;
-}
-
-public OnPlayerSpawn(playerid)
-{
+	//
+	
+	
+	
+	//not sure if __opws_fix_PlayerFixCount is still necessary tho
+	__opws_fix_PlayerFixCount{playerid} = (!GetConsoleVarAsInt("lagcompmode") ? 2 : 0);
+	
+	
 	if (__opws_fix_PlayerFixCount{playerid} > 0)
 	{
 		__opws_fix_PlayerFixCount{playerid} -= 1;
@@ -90,16 +92,13 @@ public OnPlayerSpawn(playerid)
 		__PAWNRAKNET_SEND(bs, playerid, 139, PR_HIGH_PRIORITY, PR_RELIABLE_ORDERED);
 		BS_Delete(bs);
 
-		TogglePlayerSpectating(playerid, true);
-		TogglePlayerSpectating(playerid, false);
 		return 1;
-	}
+	}	
 
-	#if defined opws_fix_OnPlayerSpawn
-		opws_fix_OnPlayerSpawn(playerid);
-	#endif
 	return 1;
 }
+
+
 
 stock opws_fix_SetWeather(weatherid)
 {
@@ -227,18 +226,6 @@ stock opws_fix_SetWorldTime(hour)
 #endif
 
 #define LimitGlobalChatRadius opws_fix_LimitGlobalChatRadius
-
-#if defined _ALS_OnPlayerSpawn
-	#undef OnPlayerSpawn
-#else
-	#define _ALS_OnPlayerSpawn
-#endif
-
-#define OnPlayerSpawn opws_fix_OnPlayerSpawn
-
-#if defined opws_fix_OnPlayerSpawn
-	forward opws_fix_OnPlayerSpawn(playerid);
-#endif
 
 #if defined _ALS_OnPlayerConnect
 	#undef OnPlayerConnect
